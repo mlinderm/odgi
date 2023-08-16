@@ -66,8 +66,8 @@ class node_t {
         }
     };
     struct step_type_helper {
-        inline static uint8_t pack(const bool& is_rev, const bool& is_start, const bool& is_end) {
-            return is_rev | (is_start << 1) | (is_end << 2);
+        inline static uint8_t pack(const bool& is_rev, const bool& is_start, const bool& is_end, const bool& is_del) {
+            return is_rev | (is_start << 1) | (is_end << 2) | (is_del << 3);
         }
         inline static bool unpack_is_rev(const uint8_t& type) {
             return type & 1;
