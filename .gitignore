@@ -11,3 +11,4 @@ docs/sphinx_build_man
 docs/_build
 Testing/
 .idea/
+.vscode/

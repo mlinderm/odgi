@@ -99,7 +99,7 @@ void node_t::add_path_step(const uint64_t& path_id, const bool& is_rev,
                            const uint64_t& next_id, const uint64_t& next_rank) {
     //std::cerr << "packing " << path_id << " " << is_rev << " " << is_start << " " << is_end << std::endl;
     paths.push_back(path_id);
-    paths.push_back(step_type_helper::pack(is_rev, is_start, is_end));
+    paths.push_back(step_type_helper::pack(is_rev, is_start, is_end, false));
     // we store the smallest possible delta for path starts and ends
     paths.push_back(encode(!is_start ? prev_id : id));
     paths.push_back(prev_rank);
@@ -172,7 +172,8 @@ void node_t::set_path_step(const uint64_t& rank, const step_t& step) {
     paths[i] = step.path_id;
     paths[i+1] = step_type_helper::pack(step.is_rev,
                                         step.is_start,
-                                        step.is_end);
+                                        step.is_end,
+                                        false);
     paths[i+2] = encode(!step.is_start ? step.prev_id : id);
     paths[i+3] = step.prev_rank;
     paths[i+4] = encode(!step.is_end ? step.next_id : id);
@@ -183,7 +184,7 @@ void node_t::clear_path_step(const uint64_t& rank) {
     if (rank >= path_count()) assert(false);
     uint64_t i = PATH_RECORD_LENGTH*rank;
     paths[i] = 0;
-    paths[i+1] = step_type_helper::pack(false, false, false);
+    paths[i+1] = step_type_helper::pack(false, false, false, true);
     paths[i+2] = encode(id);
     paths[i+3] = 0;
     paths[i+4] = encode(id);
