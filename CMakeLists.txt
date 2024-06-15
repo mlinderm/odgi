@@ -56,6 +56,10 @@ feature_summary(
   WHAT REQUIRED_PACKAGES_NOT_FOUND)
 
 pkg_check_modules(SDSLLITE sdsl-lite)
+if (NOT SDSLLITE_FOUND)
+  message("Searching for system libsdsl")
+  find_library(SDSLLITE sdsl)
+endif()
 pkg_check_modules(LIBDIVSUFSORT libdivsufsort)
 
 # --- Start: Logic for using JEMALLOC on Apple Silicon ---
@@ -82,7 +86,10 @@ endif()
 
 # Set optimization through command line; see INSTALL.md
 if (${CMAKE_BUILD_TYPE} MATCHES Release)
-  set(EXTRA_FLAGS "-Ofast -march=native -pipe -msse4.2 -funroll-all-loops") #  -fprofile-generate=../pgo")
+  set(EXTRA_FLAGS "-Ofast -march=native -pipe -funroll-all-loops") # -fprofile-generate=../pgo")
+  if(CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64|amd64|AMD64")
+    set(EXTRA_FLAGS "${EXTRA_FLAGS} -msse4.2")
+  endif()
   set(CMAKE_CXX_FLAGS_RELEASE "-DNDEBUG") # reset CXX_FLAGS to be able to replace -O3 with -Ofast
 endif ()
 
