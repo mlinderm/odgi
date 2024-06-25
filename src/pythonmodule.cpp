@@ -1,5 +1,6 @@
 // odgi
 #include "odgi.hpp"
+#include "algorithms/topological_sort.hpp"
 
 // Pybind11
 #include <pybind11/pybind11.h>
@@ -249,6 +250,9 @@ PYBIND11_MODULE(odgi, m)
              &odgi::graph_t::optimize,
              "Organize the graph for better performance and memory use.",
              py::arg("allow_id_reassignment") = false)
+        .def("is_optimized",
+             &odgi::graph_t::is_optimized,
+             "Returns true if the graph has been optimized.")
         .def("apply_path_ordering",
              &odgi::graph_t::apply_path_ordering,
              "Reorder the graph's paths as given.")
@@ -317,6 +321,14 @@ PYBIND11_MODULE(odgi, m)
                  g.deserialize(in);
              },
              "Load the graph from the given file.")
+        .def("topological_order",
+            [](odgi::graph_t& g, bool use_heads, bool use_tails, bool progress_reporting) {
+                 return algorithms::topological_order(&g, use_heads, use_tails, progress_reporting);
+             },
+             "Return a vector of handles in topological order.",
+             py::arg("use_heads") = true,
+             py::arg("use_tails") = false,
+             py::arg("progress_reporting") = false)
         // Definition of class_<odgi::graph_t> ends here.
     ;
 
